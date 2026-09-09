@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { View, Text, Button, ScrollView, StyleSheet } from 'react-native';
 import {
-   createJournal,
-    listJournals ,
-     deleteJournal,
-    writeJournalPage,
-     getJournalPage } from '../services/journalStorage';
+  createJournal,
+  listJournals,
+  deleteJournal,
+  writeJournalPage,
+  getJournalPage,
+} from './src/services/journalStorage';
 
 export default function App() {
   const [output, setOutput] = useState('Tap a button to test');
