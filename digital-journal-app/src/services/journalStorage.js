@@ -84,6 +84,19 @@ export async function updateJournalMetadata(journalId, updates) {
 }
 
 /**
+ * Reads a single journal's metadata by id — for screens that only
+ * need one journal (e.g. the review/cover screen) rather than the full list.
+ */
+export async function getJournalMetadata(journalId) {
+  const journalDir = new Directory(journalsRootDir, journalId);
+  const metadataFile = new File(journalDir, 'metadata.json');
+  if (!metadataFile.exists) {
+    throw new Error(`Journal "${journalId}" not found`);
+  }
+  return JSON.parse(await metadataFile.text());
+}
+
+/**
  * Lists all journals by reading each folder's metadata.json
  */
 export async function listJournals() {
