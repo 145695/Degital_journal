@@ -68,11 +68,6 @@ export default function JournalReviewPage() {
         onCenterPress={() =>
           router.push({ pathname: '/writing_page', params: { id: journal.id } })
         }
-        onTabPress={(tab) => {
-          if (tab === 'home') router.push('/');
-          if (tab === 'library') router.push('/library');
-          if (tab === 'profile') router.push('/profile');
-        }}
       />
     </View>
   );

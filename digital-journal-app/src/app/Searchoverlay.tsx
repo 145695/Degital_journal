@@ -1,7 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { View, TextInput, Text, TouchableOpacity, FlatList, StyleSheet, Modal } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { listJournals } from '../services/journalStorage'; // Update with your actual service import path
 
 type Journal = {
   id: string;
@@ -11,18 +13,33 @@ type Journal = {
 type SearchOverlayProps = {
   visible: boolean;
   onClose: () => void;
-  journals: Journal[];
-  onSelectJournal: (id: string) => void;
+  onSelectJournal?: (id: string) => void;
 };
 
-export default function SearchOverlay({ visible, onClose, journals, onSelectJournal }: SearchOverlayProps) {
+export default function SearchOverlay({ visible, onClose, onSelectJournal }: SearchOverlayProps) {
   const [query, setQuery] = useState('');
+  const [journals, setJournals] = useState<Journal[]>([]);
+  const router = useRouter();
 
-  // Matches if the journal's title contains the typed text or letter, case-insensitive
+  // Fetch journals internally when the overlay opens so it always has data to search
+  useEffect(() => {
+    if (visible) {
+      listJournals()
+        .then((data) => {
+          setJournals(data);
+        })
+        .catch((err) => console.error('Failed to load journals for search:', err));
+    }
+  }, [visible]);
+
+  // Matches if the journal's title contains the typed text, case-insensitive
   const results = useMemo(() => {
     if (!query.trim()) return [];
     const q = query.trim().toLowerCase();
-    return journals.filter((j) => j.title.toLowerCase().includes(q));
+    return (journals || []).filter((j) => {
+      const title = (j?.title || '').toLowerCase();
+      return title.includes(q);
+    });
   }, [query, journals]);
 
   const handleClose = () => {
@@ -65,7 +82,11 @@ export default function SearchOverlay({ visible, onClose, journals, onSelectJour
                     <TouchableOpacity
                       style={styles.resultRow}
                       onPress={() => {
-                        onSelectJournal(item.id);
+                        if (onSelectJournal) {
+                          onSelectJournal(item.id);
+                        } else {
+                          router.push({ pathname: '/journal_review_page', params: { id: item.id } });
+                        }
                         handleClose();
                       }}
                     >

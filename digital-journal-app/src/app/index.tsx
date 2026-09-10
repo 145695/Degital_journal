@@ -90,16 +90,11 @@ export default function Home() {
       </ScrollView>
 
       <MainBar
-        activeTab="home"
-        centerIcon="add"
-        centerVariant="filled"
-        onCenterPress={() => router.push('/create-journal')}
-        onTabPress={(tab) => {
-          if (tab === 'library') router.push('/library');
-          if (tab === 'profile') router.push('/profile');
-          // search left as a no-op for now
-        }}
-      />
+              activeTab="home"
+              centerIcon="add"
+              centerVariant="filled"
+              centerRoute="/create-journal"
+            />
     </View>
   );
 }
